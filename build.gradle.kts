@@ -2,4 +2,9 @@
 plugins {
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.jetbrainsKotlinAndroid) apply false
+    alias(libs.plugins.composeCompiler) apply false
+    alias(libs.plugins.kotlinXSerialization) apply false
+    alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.hilt) apply false
+    alias(libs.plugins.sqlDelight) apply false
 }
