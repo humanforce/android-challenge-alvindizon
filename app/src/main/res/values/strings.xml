@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Humanforce Android Engineering Challenge</string>
+    <string name="settings_label">Settings</string>
+    <string name="search_label">Search</string>
+    <string name="saved_locations_label">Saved Locations</string>
+    <string name="details_label">Details</string>
+    <string name="home_label">Home</string>
 </resources>
