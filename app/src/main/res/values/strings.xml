@@ -5,4 +5,8 @@
     <string name="saved_locations_label">Saved Locations</string>
     <string name="details_label">Details</string>
     <string name="home_label">Home</string>
+    <string name="search_placeholder_label">Search for locations</string>
+    <string name="clear_search_label">Clear search query</string>
+    <string name="no_results_found">Sorry, there are no locations found for your search \"%1$s\"</string>
+    <string name="search_initial_label">Try searching for locations via the search bar.</string>
 </resources>

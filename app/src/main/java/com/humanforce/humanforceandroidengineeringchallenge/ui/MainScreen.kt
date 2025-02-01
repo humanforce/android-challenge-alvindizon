@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -49,7 +50,11 @@ fun MainScreen(modifier: Modifier = Modifier) {
             modifier = Modifier.padding(paddingValues)
         ) {
             composable(TopLevelDestination.Home.route) { HomeScreen() }
-            composable(TopLevelDestination.Search.route) { SearchScreen() }
+            composable(TopLevelDestination.Search.route) {
+                SearchScreen(
+                    viewModel = hiltViewModel(),
+                    onSearchResultClick = {})
+            }
             composable(TopLevelDestination.SavedLocations.route) { SavedLocationsScreen() }
         }
     }
