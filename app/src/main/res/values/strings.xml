@@ -13,5 +13,8 @@
     <string name="daily_forecast_label">Daily forecast</string>
     <string name="min_label">Min: %1$s</string>
     <string name="max_label">Max: %1$s</string>
+    <string name="remove_location_label">Remove from saved locations</string>
+    <string name="save_location_label">Save location</string>
+    <string name="no_saved_locations">No saved locations yet.</string>
 
 </resources>

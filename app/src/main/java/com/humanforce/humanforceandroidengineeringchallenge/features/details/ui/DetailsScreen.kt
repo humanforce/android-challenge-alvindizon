@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.BookmarkAdd
+import androidx.compose.material.icons.filled.BookmarkAdded
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,9 +24,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -40,6 +45,7 @@ import com.humanforce.humanforceandroidengineeringchallenge.common.units.toTempe
 import com.humanforce.humanforceandroidengineeringchallenge.features.details.model.AggregateDailyForecast
 import com.humanforce.humanforceandroidengineeringchallenge.features.details.model.CurrentWeather
 import com.humanforce.humanforceandroidengineeringchallenge.ui.common.LoadingOverlay
+import com.humanforce.humanforceandroidengineeringchallenge.ui.common.SnackbarHandler
 import com.humanforce.humanforceandroidengineeringchallenge.ui.theme.AppTheme
 import com.humanforce.humanforceandroidengineeringchallenge.ui.utils.getOpenWeatherIconUrl
 
@@ -51,8 +57,15 @@ fun DetailsScreen(
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+    SnackbarHandler(
+        messageFlow = viewModel.snackbarMessage,
+        snackbarHostState = snackbarHostState,
+        onShowSnackbar = {}
+    )
     Scaffold(
         modifier = modifier,
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             CenterAlignedTopAppBar(
                 windowInsets = WindowInsets(top = 0.dp, bottom = 0.dp),
@@ -67,6 +80,22 @@ fun DetailsScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = "Back"
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = viewModel::onSaveLocationClick) {
+                        Icon(
+                            imageVector = if (state.isLocationSaved) {
+                                Icons.Default.BookmarkAdded
+                            } else {
+                                Icons.Default.BookmarkAdd
+                            },
+                            contentDescription = if (state.isLocationSaved) {
+                                stringResource(R.string.remove_location_label)
+                            } else {
+                                stringResource(R.string.save_location_label)
+                            }
                         )
                     }
                 }

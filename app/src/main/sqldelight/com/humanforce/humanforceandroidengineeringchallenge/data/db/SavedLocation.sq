@@ -1,0 +1,26 @@
+CREATE TABLE SavedLocation (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    state TEXT NOT NULL,
+    country TEXT NOT NULL,
+    latitude REAL NOT NULL,
+    longitude REAL NOT NULL
+);
+
+insertLocation:
+INSERT INTO SavedLocation(name, state, country, latitude, longitude)
+VALUES (?, ?, ?, ?, ?);
+
+deleteLocation:
+DELETE FROM SavedLocation
+WHERE latitude = ? AND longitude = ?;
+
+getAllLocations:
+SELECT *
+FROM SavedLocation;
+
+isLocationSaved:
+SELECT EXISTS(
+    SELECT 1 FROM SavedLocation
+    WHERE latitude = ? AND longitude = ?
+);

@@ -74,13 +74,31 @@ fun MainScreen(modifier: Modifier = Modifier) {
                             route = DetailsDestination(
                                 locationName = it.name,
                                 latitude = it.lat,
-                                longitude = it.lon
+                                longitude = it.lon,
+                                country = it.country,
+                                state = it.state
                             )
                         )
                     }
                 )
             }
-            composable<SavedLocationsDestination> { SavedLocationsScreen() }
+            composable<SavedLocationsDestination> {
+                SavedLocationsScreen(
+                    viewModel = hiltViewModel(),
+                    onSavedLocationClick = {
+                        navController.navigate(
+                            route = DetailsDestination(
+                                locationName = it.name,
+                                latitude = it.latitude,
+                                longitude = it.longitude,
+                                country = it.country,
+                                state = it.state
+                            )
+                        )
+                    },
+                    onNavigationIconClick = { navController.popBackStack() }
+                )
+            }
             composable<DetailsDestination> {
                 DetailsScreen(
                     viewModel = hiltViewModel(),

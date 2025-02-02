@@ -19,5 +19,7 @@ data object SearchDestination: NavigationDestination()
 data class DetailsDestination(
     val locationName: String,
     val latitude: Double,
-    val longitude: Double
+    val longitude: Double,
+    val country: String,
+    val state: String
 ): NavigationDestination()

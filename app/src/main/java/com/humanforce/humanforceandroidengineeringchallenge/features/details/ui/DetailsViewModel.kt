@@ -4,14 +4,18 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.humanforce.humanforceandroidengineeringchallenge.data.locations.LocationsRepository
+import com.humanforce.humanforceandroidengineeringchallenge.data.locations.model.SavedLocationData
 import com.humanforce.humanforceandroidengineeringchallenge.features.details.model.AggregateDailyForecast
 import com.humanforce.humanforceandroidengineeringchallenge.features.details.model.CurrentWeather
 import com.humanforce.humanforceandroidengineeringchallenge.features.details.usecase.GetForecastDetailsUseCase
 import com.humanforce.humanforceandroidengineeringchallenge.navigation.DetailsDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,7 +27,10 @@ data class DetailsUiState(
     val latitude: Double? = null,
     val longitude: Double? = null,
     val currentWeather: CurrentWeather? = null,
-    val dailyForecasts: List<AggregateDailyForecast>? = null
+    val dailyForecasts: List<AggregateDailyForecast>? = null,
+    val isLocationSaved: Boolean = false,
+    val country: String? = null,
+    val state: String? = null
 ) {
     companion object {
         val InitialState = DetailsUiState()
@@ -33,15 +40,20 @@ data class DetailsUiState(
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val getForecastDetailsUseCase: GetForecastDetailsUseCase
+    private val getForecastDetailsUseCase: GetForecastDetailsUseCase,
+    private val locationsRepository: LocationsRepository
 ) :
     ViewModel() {
 
     private val _uiState = MutableStateFlow(DetailsUiState.InitialState)
     val uiState = _uiState.asStateFlow()
 
-    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, _ ->
+    private val _snackbarChannel = Channel<String>(Channel.CONFLATED)
+    val snackbarMessage = _snackbarChannel.receiveAsFlow()
+
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
         _uiState.update { state -> state.copy(isLoading = false) }
+        _snackbarChannel.trySend(exception.message.orEmpty())
     }
 
     init {
@@ -50,10 +62,56 @@ class DetailsViewModel @Inject constructor(
             it.copy(
                 locationName = args.locationName,
                 latitude = args.latitude,
-                longitude = args.longitude
+                longitude = args.longitude,
+                country = args.country,
+                state = args.state
             )
         }
         loadForecast(args.latitude, args.longitude)
+        checkIfLocationIsSaved(args.latitude, args.longitude)
+    }
+
+    private fun checkIfLocationIsSaved(latitude: Double, longitude: Double) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            runCatching {
+                locationsRepository.isLocationSaved(latitude, longitude)
+            }.onSuccess { isSaved ->
+                _uiState.update { it.copy(isLocationSaved = isSaved) }
+            }
+        }
+    }
+
+    fun onSaveLocationClick() {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            val latitude = _uiState.value.latitude
+            val longitude = _uiState.value.longitude
+
+            if (latitude != null && longitude != null) {
+                if (_uiState.value.isLocationSaved) {
+                    runCatching {
+                        locationsRepository.deleteLocation(latitude, longitude)
+                    }.onSuccess {
+                        _snackbarChannel.trySend("Location removed.")
+                    }
+
+                } else {
+                    runCatching{
+                        locationsRepository.saveLocation(
+                            SavedLocationData(
+                                name = _uiState.value.locationName.orEmpty(),
+                                state = _uiState.value.state.orEmpty(),
+                                country = _uiState.value.country.orEmpty(),
+                                latitude = latitude,
+                                longitude = longitude
+                            )
+                        )
+                    }.onSuccess {
+                        _snackbarChannel.trySend("Location saved.")
+                    }
+                }
+                checkIfLocationIsSaved(latitude, longitude)
+            }
+        }
     }
 
     private fun loadForecast(latitude: Double, longitude: Double) {
@@ -69,7 +127,10 @@ class DetailsViewModel @Inject constructor(
                         dailyForecasts = dailyForecasts
                     )
                 }
-            }.onFailure { _uiState.update { it.copy(isLoading = false) } }
+            }.onFailure {
+                _uiState.update { state -> state.copy(isLoading = false) }
+                _snackbarChannel.trySend(it.message.orEmpty())
+            }
         }
     }
 }

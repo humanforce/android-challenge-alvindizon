@@ -90,4 +90,17 @@ dependencies {
     // Java 8+/Time Utils
     coreLibraryDesugaring(libs.desugar)
     implementation(libs.kotlinXDateTime)
+
+    // SQLDelight
+    implementation(libs.bundles.sqlDelight)
+}
+
+sqldelight {
+    databases {
+        create("SavedLocationDatabase") {
+            packageName.set("com.humanforce.humanforceandroidengineeringchallenge.data.db")
+            schemaOutputDirectory.set(file("src/main/sqldelight/databases"))
+
+        }
+    }
 }
