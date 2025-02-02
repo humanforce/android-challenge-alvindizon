@@ -22,6 +22,8 @@ ksp = "2.1.10-1.0.29"
 navigation = "2.8.6"
 sqlDelight = "2.0.2"
 dataStore = "1.1.2"
+desugar = "2.1.4"
+kotlinXDateTime = "0.6.1"
 
 
 [libraries]
@@ -62,6 +64,8 @@ sqlDelightDriver = { module = "app.cash.sqldelight:android-driver", version.ref 
 sqlDelightCoroutineExtensions = { module = "app.cash.sqldelight:coroutines-extensions-jvm", version.ref = "sqlDelight" }
 dataStore = { module = "androidx.datastore:datastore-preferences", version.ref = "dataStore"}
 composeNavigation = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
+desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
+kotlinXDateTime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinXDateTime" }
 
 
 [bundles]

@@ -81,7 +81,11 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 )
             }
             composable<SavedLocationsDestination> { SavedLocationsScreen() }
-            composable<DetailsDestination> { DetailsScreen(viewModel = hiltViewModel()) }
+            composable<DetailsDestination> {
+                DetailsScreen(
+                    viewModel = hiltViewModel(),
+                    onNavigationIconClick = { navController.popBackStack() })
+            }
         }
     }
 }

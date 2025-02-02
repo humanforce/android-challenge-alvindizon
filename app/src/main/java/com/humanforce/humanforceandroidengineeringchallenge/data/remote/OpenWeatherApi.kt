@@ -1,6 +1,7 @@
 package com.humanforce.humanforceandroidengineeringchallenge.data.remote
 
 import com.humanforce.humanforceandroidengineeringchallenge.data.remote.response.GetCitiesResponseItem
+import com.humanforce.humanforceandroidengineeringchallenge.data.remote.response.GetCurrentWeatherResponse
 import com.humanforce.humanforceandroidengineeringchallenge.data.remote.response.GetForecastResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -22,4 +23,12 @@ interface OpenWeatherApi {
         @Query("units") units: String = UNIT_METRIC,
         @Query("appId") appId: String = APIKeyManager.apiKey
     ): GetForecastResponse
+
+    @GET("data/2.5/weather")
+    suspend fun getCurrentWeather(
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double,
+        @Query("units") units: String = UNIT_METRIC,
+        @Query("appId") appId: String = APIKeyManager.apiKey
+    ): GetCurrentWeatherResponse
 }
