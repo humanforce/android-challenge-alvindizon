@@ -1,8 +1,12 @@
 package com.humanforce.humanforceandroidengineeringchallenge.features.home.ui
 
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.IntentSenderRequest
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.humanforce.humanforceandroidengineeringchallenge.common.units.MeasurementUnit
+import com.humanforce.humanforceandroidengineeringchallenge.data.locations.LocationManager
 import com.humanforce.humanforceandroidengineeringchallenge.data.locations.LocationsRepository
 import com.humanforce.humanforceandroidengineeringchallenge.data.locations.model.SavedLocationData
 import com.humanforce.humanforceandroidengineeringchallenge.data.settings.SettingsDataStore
@@ -42,7 +46,8 @@ data class HomeUiState(
 class HomeViewModel @Inject constructor(
     private val locationsRepository: LocationsRepository,
     private val weatherRepository: WeatherRepository,
-    private val settingsDataStore: SettingsDataStore
+    private val settingsDataStore: SettingsDataStore,
+    private val locationManager: LocationManager
 ) :
     ViewModel() {
 
@@ -67,8 +72,18 @@ class HomeViewModel @Inject constructor(
             .launchIn(viewModelScope + coroutineExceptionHandler)
     }
 
-    fun onGrantPermissions() {
+    fun onGrantPermissions(retryLocationEnableRequest: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>) {
         _uiState.update { state -> state.copy(isLoading = true) }
+        viewModelScope.launch(coroutineExceptionHandler) {
+            if (locationManager.isLocationOn(retryLocationEnableRequest)) {
+                fetchCurrentLocation()
+            } else {
+                onSavedLocationCheck()
+            }
+        }
+    }
+
+    fun fetchCurrentLocation() {
         viewModelScope.launch(coroutineExceptionHandler) {
             settingsDataStore.getUnits().collectLatest { unit ->
                 runCatching {
@@ -87,7 +102,6 @@ class HomeViewModel @Inject constructor(
                     _snackbarChannel.trySend(it.message.orEmpty())
                 }
             }
-
         }
     }
 

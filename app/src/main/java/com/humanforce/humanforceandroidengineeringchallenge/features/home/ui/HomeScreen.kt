@@ -1,8 +1,11 @@
 package com.humanforce.humanforceandroidengineeringchallenge.features.home.ui
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -69,6 +72,12 @@ fun HomeScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val retryLocationEnableRequest =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                viewModel.fetchCurrentLocation()
+            }
+        }
     SnackbarHandler(
         messageFlow = viewModel.snackbarMessage,
         snackbarHostState = snackbarHostState,
@@ -105,7 +114,9 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxSize(),
                 state = state,
                 onSearchClick = onSearchClick,
-                onGrantPermissions = viewModel::onGrantPermissions,
+                onGrantPermissions = {
+                    viewModel.onGrantPermissions(retryLocationEnableRequest)
+                },
                 onSavedLocationCheck = viewModel::onSavedLocationCheck,
                 onLocationClick = onLocationClick
             )

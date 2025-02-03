@@ -4,6 +4,7 @@ import android.content.Context
 import android.location.Geocoder
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.SettingsClient
 import com.humanforce.humanforceandroidengineeringchallenge.data.locations.LocationManager
 import com.humanforce.humanforceandroidengineeringchallenge.data.locations.LocationManagerImpl
 import com.humanforce.humanforceandroidengineeringchallenge.data.locations.LocationsRepository
@@ -35,6 +36,11 @@ abstract class LocationsModule {
         @Provides
         fun provideGeocoder(@ApplicationContext context: Context): Geocoder {
             return Geocoder(context, Locale.getDefault())
+        }
+
+        @Provides
+        fun provideSettingsClient(@ApplicationContext context: Context): SettingsClient {
+            return LocationServices.getSettingsClient(context)
         }
     }
 }
