@@ -9,27 +9,47 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 interface WeatherRepository {
-    suspend fun getCurrentWeather(latitude: Double, longitude: Double): CurrentWeatherData
+    suspend fun getCurrentWeather(
+        latitude: Double,
+        longitude: Double,
+        unit: String
+    ): CurrentWeatherData
 
-    suspend fun getForecasts(latitude: Double, longitude: Double): List<WeatherForecastData>
+    suspend fun getForecasts(
+        latitude: Double,
+        longitude: Double,
+        unit: String
+    ): List<WeatherForecastData>
 }
 
 @Singleton
-class WeatherRepositoryImpl @Inject constructor(private val openWeatherApi: OpenWeatherApi) :
+class WeatherRepositoryImpl @Inject constructor(
+    private val openWeatherApi: OpenWeatherApi
+) :
     WeatherRepository {
 
     override suspend fun getCurrentWeather(
         latitude: Double,
-        longitude: Double
+        longitude: Double,
+        unit: String
     ): CurrentWeatherData {
-        return openWeatherApi.getCurrentWeather(lat = latitude, lon = longitude)
+        return openWeatherApi.getCurrentWeather(
+            lat = latitude,
+            lon = longitude,
+            units = unit
+        )
             .toCurrentWeatherData()
     }
 
-    override suspend fun getForecasts(latitude: Double, longitude: Double): List<WeatherForecastData> {
+    override suspend fun getForecasts(
+        latitude: Double,
+        longitude: Double,
+        unit: String
+    ): List<WeatherForecastData> {
         return openWeatherApi.getForecast(
             lat = latitude,
-            lon = longitude
+            lon = longitude,
+            units = unit
         ).list?.map {
             it.toWeatherForecastData()
         } ?: emptyList()

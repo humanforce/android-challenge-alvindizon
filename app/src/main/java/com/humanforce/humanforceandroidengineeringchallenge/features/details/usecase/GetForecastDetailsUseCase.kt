@@ -1,12 +1,13 @@
 package com.humanforce.humanforceandroidengineeringchallenge.features.details.usecase
 
 import com.humanforce.humanforceandroidengineeringchallenge.common.threading.AppCoroutineDispatchers
-import com.humanforce.humanforceandroidengineeringchallenge.common.units.Temperature
+import com.humanforce.humanforceandroidengineeringchallenge.common.units.MeasurementUnit
 import com.humanforce.humanforceandroidengineeringchallenge.common.units.toTemperatureString
 import com.humanforce.humanforceandroidengineeringchallenge.data.weather.WeatherRepository
-import com.humanforce.humanforceandroidengineeringchallenge.data.weather.model.CurrentWeatherData
+import com.humanforce.humanforceandroidengineeringchallenge.features.details.mapper.toCurrentWeatherDetails
 import com.humanforce.humanforceandroidengineeringchallenge.features.details.mapper.toWeatherForecast
 import com.humanforce.humanforceandroidengineeringchallenge.features.details.model.AggregateDailyForecast
+import com.humanforce.humanforceandroidengineeringchallenge.features.details.model.CurrentWeatherDetails
 import com.humanforce.humanforceandroidengineeringchallenge.features.details.model.ForecastWrapper
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
@@ -21,20 +22,20 @@ import javax.inject.Singleton
 
 interface GetForecastDetailsUseCase {
 
-    suspend fun invoke(lat: Double, lon: Double): ForecastWrapper
+    suspend fun invoke(lat: Double, lon: Double, unit: MeasurementUnit): ForecastWrapper
 
 }
 
 @Singleton
 class GetForecastDetailsUseCaseImpl @Inject constructor(
     private val appCoroutineDispatchers: AppCoroutineDispatchers,
-    private val weatherRepository: WeatherRepository
+    private val weatherRepository: WeatherRepository,
 ) : GetForecastDetailsUseCase {
 
-    override suspend fun invoke(lat: Double, lon: Double): ForecastWrapper {
+    override suspend fun invoke(lat: Double, lon: Double, unit: MeasurementUnit): ForecastWrapper {
         return withContext(appCoroutineDispatchers.io) {
-            val forecasts = async { loadForecasts(lat, lon) }
-            val currentWeather = async { loadCurrentWeather(lat, lon) }
+            val forecasts = async { loadForecasts(lat, lon, unit) }
+            val currentWeather = async { loadCurrentWeather(lat, lon, unit) }
             ForecastWrapper(currentWeather.await(), forecasts.await())
         }
     }
@@ -42,11 +43,13 @@ class GetForecastDetailsUseCaseImpl @Inject constructor(
     @OptIn(FormatStringsInDatetimeFormats::class)
     private suspend fun loadForecasts(
         latitude: Double,
-        longitude: Double
+        longitude: Double,
+        unit: MeasurementUnit
     ): List<AggregateDailyForecast> {
         val forecasts = weatherRepository.getForecasts(
             latitude = latitude,
-            longitude = longitude
+            longitude = longitude,
+            unit = unit.name
         ).map { it.toWeatherForecast() }
         // Group by date, then get lowest temp and highest temperature for each date
         return forecasts.groupBy { forecast ->
@@ -59,17 +62,18 @@ class GetForecastDetailsUseCaseImpl @Inject constructor(
                 icon = forecasts.firstOrNull { it.icon.contains("d") }?.icon
                     ?: forecasts.firstOrNull()?.icon.orEmpty(),
                 minTemperatureString = forecasts.minOf { it.temperature }
-                    .toTemperatureString(Temperature.Celsius),
+                    .toTemperatureString(unit),
                 maxTemperatureString = forecasts.maxOf { it.temperature }
-                    .toTemperatureString(Temperature.Celsius)
+                    .toTemperatureString(unit)
             )
         }
     }
 
-    private suspend fun loadCurrentWeather(latitude: Double, longitude: Double): CurrentWeatherData {
+    private suspend fun loadCurrentWeather(latitude: Double, longitude: Double, unit: MeasurementUnit): CurrentWeatherDetails {
         return weatherRepository.getCurrentWeather(
             latitude = latitude,
-            longitude = longitude
-        )
+            longitude = longitude,
+            unit = unit.name
+        ).toCurrentWeatherDetails(measurementUnit = unit)
     }
 }

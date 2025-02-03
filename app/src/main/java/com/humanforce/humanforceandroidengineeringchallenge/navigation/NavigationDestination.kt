@@ -23,3 +23,6 @@ data class DetailsDestination(
     val country: String,
     val state: String
 ): NavigationDestination()
+
+@Serializable
+data object SettingsDestination: NavigationDestination()

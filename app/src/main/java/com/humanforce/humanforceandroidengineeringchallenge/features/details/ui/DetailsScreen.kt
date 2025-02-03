@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.BookmarkAdded
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -51,6 +52,7 @@ import com.humanforce.humanforceandroidengineeringchallenge.ui.utils.getOpenWeat
 fun DetailsScreen(
     viewModel: DetailsViewModel,
     onNavigationIconClick: () -> Unit,
+    onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -95,6 +97,12 @@ fun DetailsScreen(
                             }
                         )
                     }
+                    IconButton(onClick = onSettingsClick) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = stringResource(R.string.settings_label)
+                        )
+                    }
                 }
             )
         }
@@ -120,8 +128,8 @@ private fun DetailsContent(state: DetailsUiState, modifier: Modifier = Modifier)
             WeatherCard(
                 iconUrl = it.icon.getOpenWeatherIconUrl(),
                 description = it.description,
-                temperatureString = it.temperature.toTemperatureString(Temperature.Celsius),
-                feelsLikeTempString = it.feelsLike.toTemperatureString(Temperature.Celsius),
+                temperatureString = it.temperatureString,
+                feelsLikeTempString = it.feelsLikeString,
                 modifier = Modifier.fillMaxWidth()
             )
         }

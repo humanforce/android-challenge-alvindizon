@@ -23,5 +23,6 @@
     <string name="open_settings_label">Open App Settings</string>
     <string name="other_locations_label">Other locations</string>
     <string name="current_weather_label">Current weather</string>
+    <string name="measurement_unit_label">Unit of measurement</string>
 
 </resources>

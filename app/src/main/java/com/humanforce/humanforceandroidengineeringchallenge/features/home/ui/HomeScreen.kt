@@ -49,10 +49,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.humanforce.humanforceandroidengineeringchallenge.R
-import com.humanforce.humanforceandroidengineeringchallenge.common.units.Temperature
-import com.humanforce.humanforceandroidengineeringchallenge.common.units.toTemperatureString
 import com.humanforce.humanforceandroidengineeringchallenge.data.locations.model.SavedLocationData
-import com.humanforce.humanforceandroidengineeringchallenge.data.weather.model.CurrentWeatherData
+import com.humanforce.humanforceandroidengineeringchallenge.features.home.model.CurrentLocationWeather
 import com.humanforce.humanforceandroidengineeringchallenge.ui.common.LoadingOverlay
 import com.humanforce.humanforceandroidengineeringchallenge.ui.common.MessageScreen
 import com.humanforce.humanforceandroidengineeringchallenge.ui.common.SnackbarHandler
@@ -189,8 +187,8 @@ private fun HomeContent(
                 modifier = Modifier.wrapContentSize(),
                 iconUrl = currentWeather.icon.getOpenWeatherIconUrl(),
                 description = currentWeather.description,
-                temperatureString = currentWeather.temperature.toTemperatureString(Temperature.Celsius),
-                feelsLikeTempString = currentWeather.feelsLike.toTemperatureString(Temperature.Celsius),
+                temperatureString = currentWeather.temperatureString,
+                feelsLikeTempString = currentWeather.feelsLikeString
             )
         }
         // display other location forecasts as well if they exist
@@ -285,7 +283,7 @@ private fun PermissionRationaleView(
 
 @Composable
 private fun OtherLocationForecasts(
-    savedLocations: Map<SavedLocationData, CurrentWeatherData>,
+    savedLocations: Map<SavedLocationData, CurrentLocationWeather>,
     onLocationClick: (SavedLocationData) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -329,7 +327,7 @@ private fun OtherLocationForecasts(
                             trailingContent = {
                                 savedLocations[savedLocation]?.let {
                                     Text(
-                                        text = it.temperature.toTemperatureString(Temperature.Celsius),
+                                        text = it.temperatureString,
                                         style = MaterialTheme.typography.bodyLarge
                                     )
                                 }

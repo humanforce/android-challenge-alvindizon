@@ -4,10 +4,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.humanforce.humanforceandroidengineeringchallenge.common.units.MeasurementUnit
 import com.humanforce.humanforceandroidengineeringchallenge.data.locations.LocationsRepository
 import com.humanforce.humanforceandroidengineeringchallenge.data.locations.model.SavedLocationData
+import com.humanforce.humanforceandroidengineeringchallenge.data.settings.SettingsDataStore
 import com.humanforce.humanforceandroidengineeringchallenge.data.weather.model.CurrentWeatherData
 import com.humanforce.humanforceandroidengineeringchallenge.features.details.model.AggregateDailyForecast
+import com.humanforce.humanforceandroidengineeringchallenge.features.details.model.CurrentWeatherDetails
 import com.humanforce.humanforceandroidengineeringchallenge.features.details.usecase.GetForecastDetailsUseCase
 import com.humanforce.humanforceandroidengineeringchallenge.navigation.DetailsDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,9 +18,12 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import javax.inject.Inject
 
 
@@ -26,7 +32,7 @@ data class DetailsUiState(
     val locationName: String? = null,
     val latitude: Double? = null,
     val longitude: Double? = null,
-    val currentWeather: CurrentWeatherData? = null,
+    val currentWeather: CurrentWeatherDetails? = null,
     val dailyForecasts: List<AggregateDailyForecast>? = null,
     val isLocationSaved: Boolean = false,
     val country: String? = null,
@@ -41,7 +47,8 @@ data class DetailsUiState(
 class DetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getForecastDetailsUseCase: GetForecastDetailsUseCase,
-    private val locationsRepository: LocationsRepository
+    private val locationsRepository: LocationsRepository,
+    settingsDataStore: SettingsDataStore
 ) :
     ViewModel() {
 
@@ -67,7 +74,11 @@ class DetailsViewModel @Inject constructor(
                 state = args.state
             )
         }
-        loadForecast(args.latitude, args.longitude)
+        settingsDataStore.getUnits()
+            .onEach {
+                loadForecast(args.latitude, args.longitude, it)
+            }
+            .launchIn(viewModelScope + coroutineExceptionHandler)
         checkIfLocationIsSaved(args.latitude, args.longitude)
     }
 
@@ -114,11 +125,11 @@ class DetailsViewModel @Inject constructor(
         }
     }
 
-    private fun loadForecast(latitude: Double, longitude: Double) {
+    private fun loadForecast(latitude: Double, longitude: Double, unit: MeasurementUnit) {
         _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch(coroutineExceptionHandler) {
             runCatching {
-                getForecastDetailsUseCase.invoke(latitude, longitude)
+                getForecastDetailsUseCase.invoke(latitude, longitude, unit)
             }.onSuccess { (currentWeather, dailyForecasts) ->
                 _uiState.update {
                     it.copy(

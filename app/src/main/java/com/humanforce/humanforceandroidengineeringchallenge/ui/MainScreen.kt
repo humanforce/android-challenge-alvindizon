@@ -20,10 +20,12 @@ import com.humanforce.humanforceandroidengineeringchallenge.features.details.ui.
 import com.humanforce.humanforceandroidengineeringchallenge.features.home.ui.HomeScreen
 import com.humanforce.humanforceandroidengineeringchallenge.features.savedlocations.ui.SavedLocationsScreen
 import com.humanforce.humanforceandroidengineeringchallenge.features.search.ui.SearchScreen
+import com.humanforce.humanforceandroidengineeringchallenge.features.settings.ui.SettingsScreen
 import com.humanforce.humanforceandroidengineeringchallenge.navigation.DetailsDestination
 import com.humanforce.humanforceandroidengineeringchallenge.navigation.HomeDestination
 import com.humanforce.humanforceandroidengineeringchallenge.navigation.SavedLocationsDestination
 import com.humanforce.humanforceandroidengineeringchallenge.navigation.SearchDestination
+import com.humanforce.humanforceandroidengineeringchallenge.navigation.SettingsDestination
 import com.humanforce.humanforceandroidengineeringchallenge.navigation.TopLevelDestination
 
 /**
@@ -34,15 +36,15 @@ fun MainScreen(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
+    val isBottomNavVisible = currentDestination?.hierarchy?.any {
+        (it.route?.contains(DetailsDestination::class.qualifiedName.toString()) == true) ||
+                it.route?.contains(SettingsDestination::class.qualifiedName.toString()) == true
+    } == false
 
     Scaffold(
         modifier = modifier,
         bottomBar = {
-            AnimatedVisibility(
-                visible = currentDestination?.hierarchy?.any {
-                    it.route?.contains(DetailsDestination::class.qualifiedName.toString()) == true
-                } == false
-            ) {
+            AnimatedVisibility(visible = isBottomNavVisible) {
                 NavigationBar {
                     TopLevelDestination.entries.forEach { section ->
                         val isSelected =
@@ -69,7 +71,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                 HomeScreen(
                     viewModel = hiltViewModel(),
                     onSearchClick = { navController.navigate(SearchDestination) },
-                    onSettingsClick = {},
+                    onSettingsClick = { navController.navigate(SettingsDestination) },
                     onLocationClick = {
                         navController.navigate(
                             route = DetailsDestination(
@@ -119,7 +121,14 @@ fun MainScreen(modifier: Modifier = Modifier) {
             composable<DetailsDestination> {
                 DetailsScreen(
                     viewModel = hiltViewModel(),
+                    onSettingsClick = { navController.navigate(SettingsDestination) },
                     onNavigationIconClick = { navController.popBackStack() })
+            }
+            composable<SettingsDestination> {
+                SettingsScreen(
+                    viewModel = hiltViewModel(),
+                    onNavigationIconClick = { navController.popBackStack() }
+                )
             }
         }
     }
