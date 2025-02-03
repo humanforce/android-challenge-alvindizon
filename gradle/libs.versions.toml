@@ -1,14 +1,32 @@
 [versions]
-agp = "8.3.0"
-kotlin = "1.9.0"
-coreKtx = "1.13.1"
+agp = "8.7.3"
+kotlin = "2.1.10"
+coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
 material = "1.12.0"
-activity = "1.8.0"
-constraintlayout = "2.1.4"
+activity = "1.10.0"
+constraintlayout = "2.2.0"
+compose = "2025.01.01"
+lifecycle = "2.8.7"
+coil = "2.6.0"
+uiTextGoogleFonts = "1.7.7"
+retrofit = "2.11.0"
+okHttp = "4.12.0"
+kotlinXSerialization = "1.8.0"
+hilt = "2.55"
+hiltNavCompose = "1.2.0"
+ksp = "2.1.10-1.0.29"
+navigation = "2.8.6"
+sqlDelight = "2.0.2"
+dataStore = "1.1.2"
+desugar = "2.1.4"
+kotlinXDateTime = "0.6.1"
+accompanist = "0.37.0"
+playServicesLocation = "21.3.0"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -19,8 +37,52 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+composeBom = { module = "androidx.compose:compose-bom", version.ref = "compose"}
+composeFoundation = { module = "androidx.compose.foundation:foundation" }
+composeFoundationLayout = { module = "androidx.compose.foundation:foundation-layout" }
+composeMaterialIconsExtended = { module = "androidx.compose.material:material-icons-extended" }
+composeMaterial3 = { module = "androidx.compose.material3:material3" }
+composeRuntime = { module = "androidx.compose.runtime:runtime" }
+composeViewBinding = { module = "androidx.compose.ui:ui-viewbinding" }
+composeUiTooling = { module = "androidx.compose.ui:ui-tooling" }
+composeUiToolingPreview = { module = "androidx.compose.ui:ui-tooling-preview" }
+composeAnimation = { module = "androidx.compose.animation:animation" }
+composeUiUtils = { module = "androidx.compose.ui:ui-util" }
+viewModelCompose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+lifecycleCompose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
+coilCompose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+activityCompose = { module = "androidx.activity:activity-compose", version.ref = "activity" }
+androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+loggingInterceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okHttp" }
+kotlinXSerialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinXSerialization" }
+retrofitKotlinXConverter = { module = "com.squareup.retrofit2:converter-kotlinx-serialization", version.ref = "retrofit" }
+hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hiltCompiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
+hiltNavCompose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavCompose"}
+navigationFragmentKtx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigation" }
+navigationKtx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigation" }
+sqlDelightDriver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqlDelight" }
+sqlDelightCoroutineExtensions = { module = "app.cash.sqldelight:coroutines-extensions-jvm", version.ref = "sqlDelight" }
+dataStore = { module = "androidx.datastore:datastore-preferences", version.ref = "dataStore"}
+composeNavigation = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
+desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
+kotlinXDateTime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinXDateTime" }
+accompanistPermissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
+playServicesLocation = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
+
+[bundles]
+compose = ["composeFoundation", "composeFoundationLayout", "composeMaterialIconsExtended", "composeMaterial3", "composeRuntime", "composeAnimation", "coilCompose", "lifecycleCompose", "composeUiUtils", "viewModelCompose", "composeViewBinding", "activityCompose"]
+networking = ["retrofit", "loggingInterceptor", "retrofitKotlinXConverter", "kotlinXSerialization"]
+hilt = ["hilt", "hiltNavCompose"]
+navigation = ["navigationFragmentKtx", "navigationKtx", "composeNavigation"]
+sqlDelight = ["sqlDelightDriver", "sqlDelightCoroutineExtensions"]
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlinXSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+sqlDelight = { id = "app.cash.sqldelight", version.ref = "sqlDelight" }
