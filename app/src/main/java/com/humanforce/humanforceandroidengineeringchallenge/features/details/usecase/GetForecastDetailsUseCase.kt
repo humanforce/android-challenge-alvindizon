@@ -3,11 +3,10 @@ package com.humanforce.humanforceandroidengineeringchallenge.features.details.us
 import com.humanforce.humanforceandroidengineeringchallenge.common.threading.AppCoroutineDispatchers
 import com.humanforce.humanforceandroidengineeringchallenge.common.units.Temperature
 import com.humanforce.humanforceandroidengineeringchallenge.common.units.toTemperatureString
-import com.humanforce.humanforceandroidengineeringchallenge.data.remote.OpenWeatherApi
-import com.humanforce.humanforceandroidengineeringchallenge.features.details.mapper.toCurrentWeather
+import com.humanforce.humanforceandroidengineeringchallenge.data.weather.WeatherRepository
+import com.humanforce.humanforceandroidengineeringchallenge.data.weather.model.CurrentWeatherData
 import com.humanforce.humanforceandroidengineeringchallenge.features.details.mapper.toWeatherForecast
 import com.humanforce.humanforceandroidengineeringchallenge.features.details.model.AggregateDailyForecast
-import com.humanforce.humanforceandroidengineeringchallenge.features.details.model.CurrentWeather
 import com.humanforce.humanforceandroidengineeringchallenge.features.details.model.ForecastWrapper
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
@@ -28,8 +27,8 @@ interface GetForecastDetailsUseCase {
 
 @Singleton
 class GetForecastDetailsUseCaseImpl @Inject constructor(
-    private val openWeatherApi: OpenWeatherApi,
-    private val appCoroutineDispatchers: AppCoroutineDispatchers
+    private val appCoroutineDispatchers: AppCoroutineDispatchers,
+    private val weatherRepository: WeatherRepository
 ) : GetForecastDetailsUseCase {
 
     override suspend fun invoke(lat: Double, lon: Double): ForecastWrapper {
@@ -45,10 +44,10 @@ class GetForecastDetailsUseCaseImpl @Inject constructor(
         latitude: Double,
         longitude: Double
     ): List<AggregateDailyForecast> {
-        val forecasts = openWeatherApi.getForecast(
-            lat = latitude,
-            lon = longitude
-        ).list?.map { it.toWeatherForecast() } ?: emptyList()
+        val forecasts = weatherRepository.getForecasts(
+            latitude = latitude,
+            longitude = longitude
+        ).map { it.toWeatherForecast() }
         // Group by date, then get lowest temp and highest temperature for each date
         return forecasts.groupBy { forecast ->
             Instant.fromEpochSeconds(forecast.timestamp)
@@ -67,10 +66,10 @@ class GetForecastDetailsUseCaseImpl @Inject constructor(
         }
     }
 
-    private suspend fun loadCurrentWeather(latitude: Double, longitude: Double): CurrentWeather {
-        return openWeatherApi.getCurrentWeather(
-            lat = latitude,
-            lon = longitude
-        ).toCurrentWeather()
+    private suspend fun loadCurrentWeather(latitude: Double, longitude: Double): CurrentWeatherData {
+        return weatherRepository.getCurrentWeather(
+            latitude = latitude,
+            longitude = longitude
+        )
     }
 }

@@ -54,6 +54,7 @@ data class GetForecastResponse(
         data class City(
             val sunrise: Long? = null,
             val sunset: Long? = null,
+            val name: String? = null
         )
     }
 }

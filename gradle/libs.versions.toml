@@ -24,6 +24,8 @@ sqlDelight = "2.0.2"
 dataStore = "1.1.2"
 desugar = "2.1.4"
 kotlinXDateTime = "0.6.1"
+accompanist = "0.37.0"
+playServicesLocation = "21.3.0"
 
 
 [libraries]
@@ -66,7 +68,8 @@ dataStore = { module = "androidx.datastore:datastore-preferences", version.ref =
 composeNavigation = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
 desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
 kotlinXDateTime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinXDateTime" }
-
+accompanistPermissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
+playServicesLocation = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 
 [bundles]
 compose = ["composeFoundation", "composeFoundationLayout", "composeMaterialIconsExtended", "composeMaterial3", "composeRuntime", "composeAnimation", "coilCompose", "lifecycleCompose", "composeUiUtils", "viewModelCompose", "composeViewBinding", "activityCompose"]

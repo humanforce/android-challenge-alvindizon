@@ -11,11 +11,11 @@ data class GetCurrentWeatherResponse(
     val main: Main? = null,
     val sys: Sys? = null,
     val weather: List<Weather?>? = null,
-    val wind: Wind? = null
+    val wind: Wind? = null,
+    val state: String? = null
 ) {
     @Serializable
     data class Clouds(
-        @SerialName("all")
         val all: Int? = null
     )
 
@@ -25,13 +25,10 @@ data class GetCurrentWeatherResponse(
         val feelsLike: Double? = null,
         @SerialName("grnd_level")
         val grndLevel: Int? = null,
-        @SerialName("humidity")
         val humidity: Int? = null,
-        @SerialName("pressure")
         val pressure: Int? = null,
         @SerialName("sea_level")
         val seaLevel: Int? = null,
-        @SerialName("temp")
         val temp: Double? = null,
         @SerialName("temp_max")
         val tempMax: Double? = null,
@@ -41,33 +38,23 @@ data class GetCurrentWeatherResponse(
 
     @Serializable
     data class Sys(
-        @SerialName("country")
         val country: String? = null,
-        @SerialName("sunrise")
         val sunrise: Int? = null,
-        @SerialName("sunset")
         val sunset: Int? = null
     )
 
     @Serializable
     data class Weather(
-        @SerialName("description")
         val description: String? = null,
-        @SerialName("icon")
         val icon: String? = null,
-        @SerialName("id")
         val id: Int? = null,
-        @SerialName("main")
         val main: String? = null
     )
 
     @Serializable
     data class Wind(
-        @SerialName("deg")
         val deg: Int? = null,
-        @SerialName("gust")
         val gust: Double? = null,
-        @SerialName("speed")
         val speed: Double? = null
     )
 }

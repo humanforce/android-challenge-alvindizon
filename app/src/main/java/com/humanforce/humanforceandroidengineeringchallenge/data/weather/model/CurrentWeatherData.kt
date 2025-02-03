@@ -1,6 +1,6 @@
-package com.humanforce.humanforceandroidengineeringchallenge.features.details.model
+package com.humanforce.humanforceandroidengineeringchallenge.data.weather.model
 
-data class CurrentWeather(
+data class CurrentWeatherData(
     val temperature: Double,
     val description: String,
     val icon: String,

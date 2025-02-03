@@ -16,5 +16,12 @@
     <string name="remove_location_label">Remove from saved locations</string>
     <string name="save_location_label">Save location</string>
     <string name="no_saved_locations">No saved locations yet.</string>
+    <string name="permission_not_granted_message">In order to get the current weather in your location, the app needs your permission to access your location. Alternatively, you can search for locations via the Search screen.</string>
+    <string name="grant_permission_label">Grant location permission</string>
+    <string name="go_to_search_label">Search for locations</string>
+    <string name="permission_rationale_label">In order to fetch the current weather from your location automatically, location permissions are necessary. If you wish to grant permissions, go to your phone\'s settings and enable location permissions for this app.</string>
+    <string name="open_settings_label">Open App Settings</string>
+    <string name="other_locations_label">Other locations</string>
+    <string name="current_weather_label">Current weather</string>
 
 </resources>

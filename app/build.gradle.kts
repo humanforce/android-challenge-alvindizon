@@ -93,6 +93,9 @@ dependencies {
 
     // SQLDelight
     implementation(libs.bundles.sqlDelight)
+
+    implementation(libs.accompanistPermissions)
+    implementation(libs.playServicesLocation)
 }
 
 sqldelight {

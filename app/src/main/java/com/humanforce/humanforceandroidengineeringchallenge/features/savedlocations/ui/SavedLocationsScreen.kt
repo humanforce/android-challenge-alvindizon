@@ -31,7 +31,6 @@ import com.humanforce.humanforceandroidengineeringchallenge.data.locations.model
 import com.humanforce.humanforceandroidengineeringchallenge.ui.common.LoadingOverlay
 import com.humanforce.humanforceandroidengineeringchallenge.ui.common.MessageScreen
 import com.humanforce.humanforceandroidengineeringchallenge.ui.theme.AppTheme
-import com.humanforce.humanforceandroidengineeringchallenge.ui.utils.toFlagEmoji
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,14 +101,9 @@ private fun SavedLocationsContent(
                             )
                         },
                         supportingContent = {
-                            val text = if (it.state.isBlank()) {
-                                "${it.country} ${it.country.toFlagEmoji()}"
-                            } else {
-                                "${it.state}, ${it.country} ${it.country.toFlagEmoji()}"
-                            }
                             Text(
                                 style = MaterialTheme.typography.labelLarge,
-                                text = text,
+                                text = it.formattedLocationName,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                         }

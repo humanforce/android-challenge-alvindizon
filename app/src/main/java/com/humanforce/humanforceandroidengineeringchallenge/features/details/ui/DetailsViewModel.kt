@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.humanforce.humanforceandroidengineeringchallenge.data.locations.LocationsRepository
 import com.humanforce.humanforceandroidengineeringchallenge.data.locations.model.SavedLocationData
+import com.humanforce.humanforceandroidengineeringchallenge.data.weather.model.CurrentWeatherData
 import com.humanforce.humanforceandroidengineeringchallenge.features.details.model.AggregateDailyForecast
-import com.humanforce.humanforceandroidengineeringchallenge.features.details.model.CurrentWeather
 import com.humanforce.humanforceandroidengineeringchallenge.features.details.usecase.GetForecastDetailsUseCase
 import com.humanforce.humanforceandroidengineeringchallenge.navigation.DetailsDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +26,7 @@ data class DetailsUiState(
     val locationName: String? = null,
     val latitude: Double? = null,
     val longitude: Double? = null,
-    val currentWeather: CurrentWeather? = null,
+    val currentWeather: CurrentWeatherData? = null,
     val dailyForecasts: List<AggregateDailyForecast>? = null,
     val isLocationSaved: Boolean = false,
     val country: String? = null,

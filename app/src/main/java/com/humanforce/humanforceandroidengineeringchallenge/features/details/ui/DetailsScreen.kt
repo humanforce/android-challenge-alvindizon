@@ -3,12 +3,10 @@ package com.humanforce.humanforceandroidengineeringchallenge.features.details.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -34,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -43,9 +40,9 @@ import com.humanforce.humanforceandroidengineeringchallenge.R
 import com.humanforce.humanforceandroidengineeringchallenge.common.units.Temperature
 import com.humanforce.humanforceandroidengineeringchallenge.common.units.toTemperatureString
 import com.humanforce.humanforceandroidengineeringchallenge.features.details.model.AggregateDailyForecast
-import com.humanforce.humanforceandroidengineeringchallenge.features.details.model.CurrentWeather
 import com.humanforce.humanforceandroidengineeringchallenge.ui.common.LoadingOverlay
 import com.humanforce.humanforceandroidengineeringchallenge.ui.common.SnackbarHandler
+import com.humanforce.humanforceandroidengineeringchallenge.ui.common.WeatherCard
 import com.humanforce.humanforceandroidengineeringchallenge.ui.theme.AppTheme
 import com.humanforce.humanforceandroidengineeringchallenge.ui.utils.getOpenWeatherIconUrl
 
@@ -113,9 +110,21 @@ fun DetailsScreen(
 
 @Composable
 private fun DetailsContent(state: DetailsUiState, modifier: Modifier = Modifier) {
-    Column(modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+    Column(
+        modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         // Main Content: Contains max temp, min temp, feels like, weather icon
-        state.currentWeather?.let { WeatherCard(it) }
+        state.currentWeather?.let {
+            WeatherCard(
+                iconUrl = it.icon.getOpenWeatherIconUrl(),
+                description = it.description,
+                temperatureString = it.temperature.toTemperatureString(Temperature.Celsius),
+                feelsLikeTempString = it.feelsLike.toTemperatureString(Temperature.Celsius),
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
         // Daily forecasts: contains 5-day forecast with aggregated min/max temps.
         state.dailyForecasts?.let {
             DailyForecast(
@@ -124,63 +133,6 @@ private fun DetailsContent(state: DetailsUiState, modifier: Modifier = Modifier)
                     .fillMaxWidth()
                     .padding(top = 8.dp)
             )
-        }
-    }
-}
-
-@Composable
-private fun WeatherCard(currentWeather: CurrentWeather, modifier: Modifier = Modifier) {
-    OutlinedCard(
-        modifier = modifier,
-        colors = CardDefaults.outlinedCardColors()
-            .copy(containerColor = MaterialTheme.colorScheme.primaryContainer)
-    ) {
-        Row(
-            modifier = Modifier.padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                AsyncImage(
-                    model = currentWeather.icon.getOpenWeatherIconUrl(),
-                    contentDescription = currentWeather.description,
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .padding(bottom = 8.dp)
-                        .size(100.dp)
-                )
-                Text(
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.displaySmall,
-                    text = currentWeather.description,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            }
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(4.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    style = MaterialTheme.typography.displayMedium,
-                    text = currentWeather.temperature.toTemperatureString(Temperature.Celsius),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-
-                Text(
-                    style = MaterialTheme.typography.bodyLarge,
-                    text = stringResource(
-                        R.string.feels_like_label,
-                        currentWeather.feelsLike.toTemperatureString(Temperature.Celsius),
-                    ),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            }
         }
     }
 }

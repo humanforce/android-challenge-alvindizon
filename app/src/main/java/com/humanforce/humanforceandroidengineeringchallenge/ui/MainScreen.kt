@@ -53,7 +53,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                             selected = isSelected,
                             onClick = { navController.navigate(section.route) },
                             icon = { Icon(section.icon, section.label) },
-                            label = { Text(section.label) }
+                            label = { Text(text = section.label) }
                         )
                     }
                 }
@@ -65,7 +65,24 @@ fun MainScreen(modifier: Modifier = Modifier) {
             startDestination = TopLevelDestination.Home.route,
             modifier = Modifier.padding(paddingValues)
         ) {
-            composable<HomeDestination> { HomeScreen() }
+            composable<HomeDestination> {
+                HomeScreen(
+                    viewModel = hiltViewModel(),
+                    onSearchClick = { navController.navigate(SearchDestination) },
+                    onSettingsClick = {},
+                    onLocationClick = {
+                        navController.navigate(
+                            route = DetailsDestination(
+                                locationName = it.name,
+                                latitude = it.latitude,
+                                longitude = it.longitude,
+                                country = it.country,
+                                state = it.state
+                            )
+                        )
+                    }
+                )
+            }
             composable<SearchDestination> {
                 SearchScreen(
                     viewModel = hiltViewModel(),
